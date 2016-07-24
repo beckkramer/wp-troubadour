@@ -59,6 +59,7 @@ function custom_post_type() {
 		'has_archive'           => true,		
 		'exclude_from_search'   => false,
 		'publicly_queryable'    => true,
+		'query_var'							=> 'story',
 		'capability_type'       => 'page',
 		'menu_icon'   => 'dashicons-book-alt',
 		'rewrite' => array( 'slug' => 'stories', 'with_front' => true ),
@@ -89,7 +90,7 @@ add_action('add_meta_boxes', 'add_writer_meta_box');
 
 function show_writer_meta_box() {
     global $post;  
-    $meta = get_post_meta($post->ID, 'writer_name', true);  
+    $meta = get_post_meta($post->ID, 'writer_name', true);
 	
     // Use nonce for verification  
 	echo '<input type="hidden" name="custom_meta_box_nonce" value="'.wp_create_nonce(basename(__FILE__)).'" />';  
@@ -103,6 +104,8 @@ function show_writer_meta_box() {
             
     echo '</table>';
 }
+
+wp_nonce_field( basename( __FILE__ ), 'writer_meta_box_nonce' );
 
 // Add Audio Meta Box
 
@@ -119,8 +122,8 @@ function add_audio_meta_box() {
 add_action('add_meta_boxes', 'add_audio_meta_box');
 
 function show_audio_meta_box() {
-  global $post;  
-  $meta = get_post_meta($post->ID, 'audio_info', true);  
+  global $post;
+  $meta = ( get_post_meta($post->ID, 'audio_info', true) ) ? get_post_meta( $post->ID, 'audio_info', true ) : array();  
 
 	echo '<input type="hidden" name="custom_meta_box_nonce" value="'.wp_create_nonce(basename(__FILE__)).'" />';  
    
@@ -128,17 +131,19 @@ function show_audio_meta_box() {
   
   echo '<tr>
     <th><label for="audio_info_soundcloud">Soundcloud</label></th>
-    <td><textarea name="audio_info[\'soundcloud\']" id="audio_info_soundcloud" cols="60" rows="4">' . $meta . '</textarea>
+    <td><textarea name="audio_info[]" id="audio_info_soundcloud" cols="60" rows="4">' . $meta . '</textarea>
     <span class="description">Paste the embed code here.</span></td>
     </tr>';
   
   echo '<tr>
     <th><label for="audio_info_youtube">YouTube</label></th>
-    <td><textarea name="audio_info[\'youtube\']" id="audio_info_youtube" cols="60" rows="4">' . $meta . '</textarea>
+    <td><textarea name="audio_info[]" id="audio_info_youtube" cols="60" rows="4">' . $meta . '</textarea>
     <span class="description">Paste the embed code here.</span></td>
     </tr>';
             
   echo '</table>';
 }
+
+wp_nonce_field( basename( __FILE__ ), 'audio_meta_box_nonce' );
 
 ?>
