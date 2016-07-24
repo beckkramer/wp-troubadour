@@ -95,17 +95,16 @@ function show_writer_meta_box() {
     // Use nonce for verification  
 	echo '<input type="hidden" name="custom_meta_box_nonce" value="'.wp_create_nonce(basename(__FILE__)).'" />';  
    
-   echo '<table class="form-table">';   
-        // begin a table row with
-        echo '<tr>
-            <th><label for="writer_name">Writer Name</label></th>
-            <td><input type="text" name="writer_name" id="writer_name" value="' . $meta . '" /"></td>
-            </tr>';
-            
-    echo '</table>';
-}
+ 	echo '<table class="form-table">';   
+    // begin a table row with
+    echo '<tr>
+    	<th><label for="writer_name">Writer Name</label></th>
+      <td><input type="text" name="writer_name" id="writer_name" value="' . $meta . '" /"></td>
+      </tr>';
+          
+  echo '</table>';
 
-wp_nonce_field( basename( __FILE__ ), 'writer_meta_box_nonce' );
+}
 
 // Add Audio Meta Box
 
@@ -143,7 +142,5 @@ function show_audio_meta_box() {
             
   echo '</table>';
 }
-
-wp_nonce_field( basename( __FILE__ ), 'audio_meta_box_nonce' );
 
 ?>
