@@ -143,4 +143,19 @@ function show_audio_meta_box() {
   echo '</table>';
 }
 
+
+// Add single story template
+
+function get_custom_post_type_template($single_template) {
+  
+  global $post;
+
+	if ($post->post_type == 'trbdr_story') {
+		$single_template = dirname( __FILE__ ) . '/templates/single-story.php';
+	}
+	return $single_template;
+}
+
+add_filter( 'single_template', 'get_custom_post_type_template' );
+
 ?>
