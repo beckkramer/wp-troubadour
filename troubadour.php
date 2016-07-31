@@ -153,13 +153,13 @@ function show_audio_meta_box() {
   echo '<tr>
     <th><label for="story_audio_info_soundcloud">Soundcloud</label></th>
     <td><textarea name="story_audio_info[]" id="story_audio_info_soundcloud" cols="60" rows="4">' . $meta[0] . '</textarea>
-    <span class="description">Paste the embed code here.</span></td>
+    <span class="description">Paste the URL to your Soundcloud track here.</span></td>
     </tr>';
   
   echo '<tr>
     <th><label for="story_audio_info_youtube">YouTube</label></th>
     <td><textarea name="story_audio_info[]" id="story_audio_info_youtube" cols="60" rows="4">' . $meta[1] . '</textarea>
-    <span class="description">Paste the embed code here.</span></td>
+    <span class="description">Paste the embed code from your YouTube video here.</span></td>
     </tr>';
             
   echo '</table>';

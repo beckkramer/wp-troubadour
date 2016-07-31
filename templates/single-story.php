@@ -13,7 +13,6 @@ get_header(); ?>
 		while ( have_posts() ) : the_post();
 
 			var_dump(get_post_meta($post->ID));
-			var_dump($post);
 
 			/*
 			* Contents of content.php file
@@ -42,6 +41,24 @@ get_header(); ?>
 
 					?>
 				</header><!-- .entry-header -->
+
+				<div class="story-audio">
+
+					<?php
+
+					$story_audio_array = get_post_meta($post->ID, 'story_audio_info', true);
+
+					// 0 = Soundcloud, 1 = Youtube
+
+					// Soundcloud
+					echo '<iframe width="100%" height="150" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=' . $story_audio_array[0] . '&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=true&amp;show_artwork=false&amp;show_reposts=false&amp;visual=false"></iframe>';
+
+					// Youtube
+					echo $story_audio_array[1];
+
+
+					?>
+				</div>
 
 				<div class="entry-content">
 					<?php
