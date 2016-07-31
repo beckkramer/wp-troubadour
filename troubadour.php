@@ -4,7 +4,7 @@
 * Plugin Name: Troubadour
 * Plugin URI: 
 * Description: A plugin for posting and organizing collections of stories with non-user authors on WordPress.
-* Version: 0.1.0
+* Version: 0.1.1
 * Author: Beck Kramer
 * Author URI: http://www.beckkramer.com
 * License: GPL2
@@ -66,7 +66,6 @@ function custom_post_type() {
 	);
 
 	register_post_type( 'trbdr_story', $args );
-
 	flush_rewrite_rules();
 
 }
@@ -74,8 +73,9 @@ function custom_post_type() {
 add_action( 'init', 'custom_post_type', 0 );
 
 
-// Add Writer Info Meta Box
+// Writer Info
 
+// Add meta box
 function add_writer_meta_box() {
     add_meta_box(
         'trbdr_writer_meta_box', // $id
@@ -88,23 +88,41 @@ function add_writer_meta_box() {
 
 add_action('add_meta_boxes', 'add_writer_meta_box');
 
+
+// Render meta box html
 function show_writer_meta_box() {
-    global $post;  
-    $meta = get_post_meta($post->ID, 'writer_name', true);
+  global $post;  
+  $meta = get_post_meta($post->ID, 'story_writer_name', true);
 	
-    // Use nonce for verification  
-	echo '<input type="hidden" name="custom_meta_box_nonce" value="'.wp_create_nonce(basename(__FILE__)).'" />';  
+  // Use nonce for verification  
+	echo '<input type="hidden" name="writer_meta_box_nonce" value="'.wp_create_nonce(basename(__FILE__)).'" />';  
    
  	echo '<table class="form-table">';   
     // begin a table row with
     echo '<tr>
-    	<th><label for="writer_name">Writer Name</label></th>
-      <td><input type="text" name="writer_name" id="writer_name" value="' . $meta . '" /"></td>
+    	<th><label for="story_writer_name">Writer Name</label></th>
+      <td><input type="text" name="story_writer_name" id="story_writer_name" value="' . $meta . '" /></td>
       </tr>';
           
   echo '</table>';
 
 }
+
+// Save meta box data
+
+add_action( 'save_post', 'save_story_writer_meta_fields', 10, 2 );
+
+function save_story_writer_meta_fields( $post_id, $post ) {
+    if ( $post->post_type == 'trbdr_story' ) {
+        // Store data in post meta table if present in post data
+        if ( isset( $_POST['story_writer_name'] ) && $_POST['story_writer_name'] != '' ) {
+            update_post_meta( $post_id, 'story_writer_name', $_POST['story_writer_name'] );
+        }
+    }
+}
+
+
+
 
 // Add Audio Meta Box
 
@@ -120,33 +138,50 @@ function add_audio_meta_box() {
 
 add_action('add_meta_boxes', 'add_audio_meta_box');
 
+
+// Display audio meta html
+// @todo: make keys specific to the audio service instead of integers
+
 function show_audio_meta_box() {
   global $post;
-  $meta = ( get_post_meta($post->ID, 'audio_info', true) ) ? get_post_meta( $post->ID, 'audio_info', true ) : array();  
+  $meta = ( get_post_meta($post->ID, 'story_audio_info', true) ) ? get_post_meta( $post->ID, 'story_audio_info', true ) : array();  
 
-	echo '<input type="hidden" name="custom_meta_box_nonce" value="'.wp_create_nonce(basename(__FILE__)).'" />';  
+	echo '<input type="hidden" name="audio_meta_box_nonce" value="'.wp_create_nonce(basename(__FILE__)).'" />';  
    
   echo '<table class="form-table">';
   
   echo '<tr>
-    <th><label for="audio_info_soundcloud">Soundcloud</label></th>
-    <td><textarea name="audio_info[]" id="audio_info_soundcloud" cols="60" rows="4">' . $meta . '</textarea>
+    <th><label for="story_audio_info_soundcloud">Soundcloud</label></th>
+    <td><textarea name="story_audio_info[]" id="story_audio_info_soundcloud" cols="60" rows="4">' . $meta[0] . '</textarea>
     <span class="description">Paste the embed code here.</span></td>
     </tr>';
   
   echo '<tr>
-    <th><label for="audio_info_youtube">YouTube</label></th>
-    <td><textarea name="audio_info[]" id="audio_info_youtube" cols="60" rows="4">' . $meta . '</textarea>
+    <th><label for="story_audio_info_youtube">YouTube</label></th>
+    <td><textarea name="story_audio_info[]" id="story_audio_info_youtube" cols="60" rows="4">' . $meta[1] . '</textarea>
     <span class="description">Paste the embed code here.</span></td>
     </tr>';
             
   echo '</table>';
 }
 
+// Save meta box data
+
+add_action( 'save_post', 'save_story_audio_info_fields', 10, 2 );
+
+function save_story_audio_info_fields( $post_id, $post ) {
+    if ( $post->post_type == 'trbdr_story' ) {
+        // Store data in post meta table if present in post data
+        if ( isset( $_POST['story_audio_info'] ) && $_POST['story_audio_info'] != '' ) {
+            update_post_meta( $post_id, 'story_audio_info', $_POST['story_audio_info'] );
+        }
+    }
+}
+
 
 // Add single story template
 
-function get_custom_post_type_template($single_template) {
+function get_story_template($single_template) {
   
   global $post;
 
@@ -156,6 +191,6 @@ function get_custom_post_type_template($single_template) {
 	return $single_template;
 }
 
-add_filter( 'single_template', 'get_custom_post_type_template' );
+add_filter( 'single_template', 'get_story_template' );
 
 ?>
