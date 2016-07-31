@@ -126,6 +126,8 @@ function save_story_writer_meta_fields( $post_id, $post ) {
 
 // Add Audio Meta Box
 
+add_action('add_meta_boxes', 'add_audio_meta_box');
+
 function add_audio_meta_box() {
     add_meta_box(
         'trbdr_audio_meta_box', // $id
@@ -135,8 +137,6 @@ function add_audio_meta_box() {
         'normal', // $context
         'low'); // $priority
 }
-
-add_action('add_meta_boxes', 'add_audio_meta_box');
 
 
 // Display audio meta html
@@ -179,18 +179,36 @@ function save_story_audio_info_fields( $post_id, $post ) {
 }
 
 
+
+
+
+// === Templates === ///
+
 // Add single story template
 
-function get_story_template($single_template) {
+add_filter( 'single_template', 'get_story_single_template' );
+
+function get_story_single_template($single_template) {
   
   global $post;
 
 	if ($post->post_type == 'trbdr_story') {
 		$single_template = dirname( __FILE__ ) . '/templates/single-story.php';
 	}
+
 	return $single_template;
 }
 
-add_filter( 'single_template', 'get_story_template' );
 
-?>
+// Add some basic CSS
+
+add_action( 'wp_enqueue_scripts', 'trbdr_story_css' );
+
+function trbdr_story_css()
+{
+    // Register the style like this for a plugin:
+    wp_register_style( 'troubadour', plugins_url( '/css/troubadour.css', __FILE__ ), array(), '20120208', 'all' );
+  
+    // For either a plugin or a theme, you can then enqueue the style:
+    wp_enqueue_style( 'troubadour' );
+}
